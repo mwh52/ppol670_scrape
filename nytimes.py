@@ -5,18 +5,16 @@ import requests
 import json
 import time
 
-# Initialize ScraperWiki table
-def init_table():
-    scraperwiki.sqlite.execute("DROP TABLE nytimes")
-    
-
 # Get total pages
 def get_pages(key_word):
     payload = {'api-key':'fa45552479ff69987f5809b3f911bc1c:9:71252208', 
                'q':key_word}
     r = requests.get('http://api.nytimes.com/svc/search/v2/articlesearch.json?', params = payload)
     response = json.loads(r.text)['response']['meta']['hits']
-    return int(response/10)-1
+    if int(response/10)-1 < 100:
+        return int(response/10)-1
+    else:
+        return 100
 
 # Request from New York Times
 def api_request(key_word, page=1):
@@ -33,7 +31,6 @@ def append_table(response, keyword, page):
     for article in response:
         scraperwiki.sqlite.execute("INSERT INTO nytimes (epoch_time, id, date_time, keyword, page) VALUES (?,?,?,?,?)", 
                                    (int(100*time.time()), article['_id'], article['pub_date'], keyword, page))
-    scraperwiki.sqlite.commit()
 
 # List of keywords
 keywords = ['budget deficit','compensatory spending','debt','government debt',
@@ -49,7 +46,7 @@ def left_over():
         return [current_word,current_page]
     except:
         scraperwiki.sqlite.execute("CREATE TABLE nytimes (epoch_time int, id string, date_time string, keyword string, page int)")
-        return ['budget deficit', 1]
+        return ['budget deficit', 0]
 
 # Main function
 def main():
@@ -58,14 +55,19 @@ def main():
     for i in range(keyword_pos, len(keywords)):
         try:
             page_count = get_pages(keywords[i])
-            for page_num in range(int(current_pos[1]),page_count+1):
+            
+            if i==keyword_pos:
+                start_page = int(current_pos[1])
+            else:
+                start_page = 0
+            for page_num in range(start_page,page_count):
                 try:
                     response_info = api_request(keywords[i], page_num)
                     append_table(response_info, keywords[i], page_num)
                 except:
-                    raise
+                    pass
         except:
-            raise
+            pass
 
 
 if __name__ == '__main__' :
