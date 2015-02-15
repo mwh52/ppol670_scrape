@@ -8,7 +8,7 @@ import time
 # Initialize ScraperWiki table
 def init_table():
     scraperwiki.sqlite.execute("DROP TABLE nytimes")
-    scraperwiki.sqlite.execute("CREATE TABLE nytimes (id string, date_time string)")
+    
 
 # Get total pages
 def get_pages(key_word):
@@ -29,10 +29,10 @@ def api_request(key_word, page=1):
     return response
 
 # Append responses to table
-def append_table(response):
+def append_table(response, keyword, page):
     for article in response:
-        scraperwiki.sqlite.execute("INSERT INTO nytimes (id, date_time) VALUES (?,?)", 
-                                   (article['_id'], article['pub_date']))
+        scraperwiki.sqlite.execute("INSERT INTO nytimes (epoch_time, id, date_time, keyword, page) VALUES (?,?,?,?,?)", 
+                                   (int(100*time.time()), article['_id'], article['pub_date'], keyword, page))
     scraperwiki.sqlite.commit()
 
 # List of keywords
@@ -40,24 +40,35 @@ keywords = ['budget deficit','compensatory spending','debt','government debt',
             'debt explosion','deficit financing','in the red','megadebt',
             'negative cash flow','no assets','overspending','national debt']
 
+# Continue scrape
+def left_over():
+    try:
+        current = scraperwiki.sqlite.execute("SELECT keyword, page FROM nytimes ORDER BY epoch_time DESC LIMIT 1")
+        current_word = current['data'][0][0]
+        current_page = current['data'][0][1]
+        return [current_word,current_page]
+    except:
+        scraperwiki.sqlite.execute("CREATE TABLE nytimes (epoch_time int, id string, date_time string, keyword string, page int)")
+        return ['budget deficit', 1]
 
 # Main function
 def main():
-    init_table()
-    for keyword in keywords:
+    current_pos = left_over()
+    keyword_pos = [i for i,x in enumerate(keywords) if x == current_pos[0]][0]
+    for i in range(keyword_pos, len(keywords)):
         try:
-            page_count = get_pages(keyword)
-            for page_num in range(page_count):
+            page_count = get_pages(keywords[i])
+            for page_num in range(int(current_pos[1]),page_count+1):
                 try:
-                    response_info = api_request(keyword, page_num)
-                    append_table(response_info)
+                    response_info = api_request(keywords[i], page_num)
+                    append_table(response_info, keywords[i], page_num)
                 except:
-                    pass
+                    raise
         except:
-            pass
+            raise
 
 
-    
 if __name__ == '__main__' :
     main()
+
 
