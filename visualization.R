@@ -17,5 +17,8 @@ nytimes_clean$year_month <- ymd(nytimes_clean$year_month)
 
 png(file="figure/budget.png",
     width = 800, height = 600)
-ggplot(nytimes_clean,aes(year_month,n))+geom_line()+theme_bw()
+ggplot(nytimes_clean,aes(year_month,n))+geom_line()+theme_bw()+
+    scale_x_datetime()+labs(x="Year")+labs(y="Frequency")
 dev.off()
+
+
