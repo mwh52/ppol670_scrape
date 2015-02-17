@@ -8,6 +8,7 @@ import time
 # Get total pages
 # Note: Void API Key for demo only.
 
+
 def get_pages(key_word):
     payload = {'api-key': 'fa45552479ff69987f5809b3f911bc1c:9:71252208',
                'q': key_word}
