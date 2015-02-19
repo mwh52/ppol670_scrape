@@ -48,4 +48,4 @@ In this repo:
 
 ## Keywords selection
 The keywords used in this analysis include:
-    budget deficit, compensatory spending, debt, government debt, debt explosion, deficit financing, in the red, megadebt, negative cash flow, no assets, overspending, national debt
+    `budget deficit`, `compensatory spending`, `debt`, `government debt`, `debt explosion`, `deficit financing`, `in the red`, `megadebt`, `negative cash flow`, `no assets`, `overspending`, `national debt`
