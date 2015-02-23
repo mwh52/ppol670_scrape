@@ -23,7 +23,7 @@ The coverage of budget deficit start as early as 1850s. The highest ten years in
 ## Budget Deficit Coverage in NYTimes (2000 - current)
 ![Budget Deficit Coverage in NYTimes (2000-now)](figure/since_2000.png)
 
-More media coverage on budget deficit since 2010. As shown in the table below, among highest ten month in the history, 9 month were in 2010s.
+More media coverage on budget deficit since 2010. As shown in the table below, among highest ten months in the history, 9 months were in 2010s.
 
 |Rank|Month|Freq.|
 |----|----|---------|
